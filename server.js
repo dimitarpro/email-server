@@ -1,6 +1,6 @@
 const express = require("express");
-const nodemailer = require("nodemailer");
 const cors = require("cors");
+const sgMail = require("@sendgrid/mail");
 
 const app = express();
 app.use(express.json());
@@ -18,32 +18,26 @@ app.use((req, res, next) => {
   next();
 });
 
+// ✅ Set SendGrid API key
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+
 // ✅ Email рута со логирање
 app.post("/send-email", async (req, res) => {
   const { to, subject, html } = req.body;
   console.log("Request body:", req.body);
 
   try {
-    // ✅ SendGrid SMTP конфигурација
-    const transporter = nodemailer.createTransport({
-      host: "smtp.sendgrid.net",
-      port: 587,
-      secure: false,
-      auth: {
-        user: "apikey", // ова е фиксно
-        pass: process.env.SENDGRID_API_KEY, // твој API key од SendGrid
-      },
-    });
-
-    const info = await transporter.sendMail({
-      from: process.env.SENDGRID_FROM, // сетирај го во Render Env
+    const msg = {
       to,
+      from: process.env.SENDGRID_FROM, // мора да биде верифицирана адреса во SendGrid
       subject,
       html,
-    });
+    };
 
-    console.log("Email sent:", info.messageId);
-    res.json({ success: true, id: info.messageId });
+    await sgMail.send(msg);
+
+    console.log("Email sent successfully");
+    res.json({ success: true });
   } catch (error) {
     console.error("Email error:", error);
     res.status(500).json({ success: false, error: error.message });
