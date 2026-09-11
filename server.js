@@ -24,8 +24,11 @@ app.post("/send-email", async (req, res) => {
   console.log("Request body:", req.body);
 
   try {
+    // ✅ SMTP конфигурација со порт 587 (TLS)
     const transporter = nodemailer.createTransport({
-      service: "gmail",
+      host: "smtp.gmail.com",
+      port: 587,
+      secure: false, // користи STARTTLS
       auth: {
         user: process.env.GMAIL_USER,
         pass: process.env.GMAIL_APP_PASSWORD,
