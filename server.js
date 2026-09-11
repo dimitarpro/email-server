@@ -5,7 +5,10 @@ const cors = require("cors");
 const app = express();
 app.use(express.json());
 
-// ✅ Додај го CORS middleware тука
+// ✅ CORS middleware
+app.use(cors({ origin: "*" }));
+
+// ✅ Дополнителни headers (ако треба)
 app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", "*");
   res.header(
@@ -15,12 +18,10 @@ app.use((req, res, next) => {
   next();
 });
 
-// или уште подобро со cors пакетот:
-app.use(cors({ origin: "*" }));
-
-// ✅ Твојата POST рута
+// ✅ Email рута со логирање
 app.post("/send-email", async (req, res) => {
   const { to, subject, html } = req.body;
+  console.log("Request body:", req.body);
 
   try {
     const transporter = nodemailer.createTransport({
@@ -38,11 +39,13 @@ app.post("/send-email", async (req, res) => {
       html,
     });
 
+    console.log("Email sent:", info.messageId);
     res.json({ success: true, id: info.messageId });
   } catch (error) {
+    console.error("Email error:", error);
     res.status(500).json({ success: false, error: error.message });
   }
 });
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 10000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
