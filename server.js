@@ -24,19 +24,19 @@ app.post("/send-email", async (req, res) => {
   console.log("Request body:", req.body);
 
   try {
-    // ✅ SMTP конфигурација со порт 587 (TLS)
+    // ✅ SendGrid SMTP конфигурација
     const transporter = nodemailer.createTransport({
-      host: "smtp.gmail.com",
+      host: "smtp.sendgrid.net",
       port: 587,
-      secure: false, // користи STARTTLS
+      secure: false,
       auth: {
-        user: process.env.GMAIL_USER,
-        pass: process.env.GMAIL_APP_PASSWORD,
+        user: "apikey", // ова е фиксно
+        pass: process.env.SENDGRID_API_KEY, // твој API key од SendGrid
       },
     });
 
     const info = await transporter.sendMail({
-      from: process.env.GMAIL_USER,
+      from: process.env.SENDGRID_FROM, // сетирај го во Render Env
       to,
       subject,
       html,
