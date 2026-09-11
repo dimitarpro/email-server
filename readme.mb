@@ -1,0 +1,11 @@
+# Email Server (Node.js + Gmail App Password)
+
+Овој проект е мал Node.js сервер кој праќа е-пошта преку Gmail SMTP со App Password.
+
+## Како да го користиш
+1. Креирај Gmail App Password (16 карактери, без празни места).
+2. Во Render → Environment Variables додади:
+   - `GMAIL_USER = твоја Gmail адреса`
+   - `GMAIL_APP_PASSWORD = твојот App Password`
+3. Deploy како Web Service на Render.
+4. Flutter апликацијата праќа `POST` кон:
